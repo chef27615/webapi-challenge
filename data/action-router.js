@@ -15,7 +15,7 @@ actionRouter.post('/', async (req, res) => {
         if(project_id&&description&&notes){
             return res.status(200).json(newAction)
         }else{ return res.status(400).json({ message: "try again"})}
-    } catch(err){ res.status(500).json({errorMessage: "project id does not available"})}
+    } catch(err){ res.status(500).json({errorMessage: err})}
     
 })
 
