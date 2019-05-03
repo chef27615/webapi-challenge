@@ -2,10 +2,16 @@ const express = require('express');
 
 const Projects = require('./helpers/projectModel');
 
+const actions = require('./action-router');
+
+
+
 const projectRouter = express.Router();
 
+projectRouter.use('/actions', actions);
+
 projectRouter.get('/', async (req, res) => {
-    try{
+    try {
         const projects = await Projects.get();
         res.status(200).json(projects);
     } catch(err){ res.status(500).json({ error: err});}
@@ -18,6 +24,13 @@ projectRouter.post('/', async (req, res) => {
         name && description ? res.status(200).json(newProject) : res.status(400),json({
             message: "name and description are both required for project"
         })
+    } catch(err){ res.status(500).json({ error: err});}
+})
+
+projectRouter.get('/:id', async (req, res) => {
+    try {
+        const project = await Projects.get(req.params.id)
+        project ? res.status(200).json(project) : res.status(404).json({ message: "no such id available"})
     } catch(err){ res.status(500).json({ error: err});}
 })
 
