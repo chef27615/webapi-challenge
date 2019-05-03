@@ -8,11 +8,16 @@ actionRouter.get('/', async (req, res) => {
     if(actions){ return res.status(200).json(actions)}
 })
 
-// actionRouter.post('/', async (req, res) => {
-//     const newAction = await Actions.insert(req.body);
-//     const { project_id, description, notes } = req.body;
-//     if()
-// })
+actionRouter.post('/', async (req, res) => {
+    try{
+        const newAction = await Actions.insert(req.body);
+        const { project_id, description, notes } = req.body;
+        if(project_id&&description&&notes){
+            return res.status(200).json(newAction)
+        }else{ return res.status(400).json({ message: "try again"})}
+    } catch(err){ res.status(500).json({errorMessage: "project id does not available"})}
+    
+})
 
 actionRouter.delete('/:id', async(req, res) => {
     try{
