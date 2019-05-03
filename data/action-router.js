@@ -4,12 +4,20 @@ const Projects = require('./helpers/projectModel');
 const actionRouter = express.Router();
 
 
-actionRouter.get('/', (req, res) => {
-    try {
-        const action = Actions.get();
-        action ? res.status(200).json(action) : res.status(404).json({ message: "no project no action"})
-    } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
+actionRouter.get('/:id', function(req, res, next){
+    try{
+        let projectId = req.params.project_id;
+        const actions = Actions.get(projectId);
+        actions ? res.status(200).json(actions) : res.status(404).json({ message: "nothing here"})
+    } catch(err){ res.status(500).json({ message: err})}
 })
+
+// actionRouter.get('/', (req, res) => {
+//     try {
+//         const action = Actions.get();
+//         action ? res.status(200).json(action) : res.status(404).json({ message: "no project no action"})
+//     } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
+// })
 
 actionRouter.post('/', async (req, res) => {
     try{
