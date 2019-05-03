@@ -2,13 +2,13 @@ const express = require('express');
 
 const Projects = require('./helpers/projectModel');
 
-// const actions = require('./action-router');
+const actions = require('./action-router');
 
 
 
 const projectRouter = express.Router();
 
-// projectRouter.use('/actions', actions);
+projectRouter.use('/actions', actions);
 
 projectRouter.get('/', async (req, res) => {
     try {

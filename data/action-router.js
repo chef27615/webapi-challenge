@@ -19,11 +19,15 @@ actionRouter.get('/:id', function(req, res, next){
 //     } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
 // })
 
-actionRouter.post('/', async (req, res) => {
+actionRouter.post('/:project_id', async (req, res) => {
     try{
         const action = await Actions.insert(req.body);
-        const { project_id, description, notes} = req.body;
-        project_id && description && notes ? res.status(200).json(action) : res.status(400).json({ message: "some of the required fields are not filled out, please try again"})
+        const { description, notes} = req.body;
+        if(description.length > 128){
+            return res.status(400).json({ message: "too long"})
+        } else if(description && notes){
+            return res.status(200).json(action)
+        } else{return res.status(400).json({ message: "there is something wrong"})}
     } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
 })
 
