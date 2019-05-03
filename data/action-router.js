@@ -11,7 +11,6 @@ actionRouter.get('/', async (req, res) => {
 actionRouter.post('/', checkLength, async (req, res) => {
     
     try{
-        console.log(req.body)
         const newAction = await Actions.insert(req.body);
         const { project_id, description, notes } = req.body;
         if(project_id && description.length  &&notes){
