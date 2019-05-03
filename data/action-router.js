@@ -3,47 +3,36 @@ const Actions = require('./helpers/actionModel');
 const Projects = require('./helpers/projectModel');
 const actionRouter = express.Router();
 
-
-actionRouter.get('/:id', function(req, res, next){
-    try{
-        let projectId = req.params.project_id;
-        const actions = Actions.get(projectId);
-        actions ? res.status(200).json(actions) : res.status(404).json({ message: "nothing here"})
-    } catch(err){ res.status(500).json({ message: err})}
+actionRouter.get('/', async (req, res) => {
+    const actions = await Actions.get(req.params.id)
+    if(actions){ return res.status(200).json(actions)}
 })
 
-// actionRouter.get('/', (req, res) => {
-//     try {
-//         const action = Actions.get();
-//         action ? res.status(200).json(action) : res.status(404).json({ message: "no project no action"})
-//     } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
+// actionRouter.post('/', async (req, res) => {
+//     const newAction = await Actions.insert(req.body);
+//     const { project_id, description, notes } = req.body;
+//     if()
 // })
 
-actionRouter.post('/:project_id', async (req, res) => {
+actionRouter.delete('/:id', async(req, res) => {
     try{
-        const action = await Actions.insert(req.body);
-        const { description, notes} = req.body;
-        if(description.length > 128){
-            return res.status(400).json({ message: "too long"})
-        } else if(description && notes){
-            return res.status(200).json(action)
-        } else{return res.status(400).json({ message: "there is something wrong"})}
-    } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
+        const id = await Actions.remove(req.params.id);
+        if(id){ 
+            return res.status(200).json({ message: "action deleted"})
+        }else{
+            return res.status(404).json({ message: " id not available"})
+        }
+    } catch(err){ res.status(500).json({errorMessage: err})}
 })
 
-actionRouter.delete('/:id', async (req, res) => {
-    try {
-        const id =  await Actions.remove(req.params.id);
-        id > 0 ? res.status(200).json({ message: "action deleted"}) : res.status(404).json({ message: " can not find the action by this id"})  
-    } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
-})
-
-actionRouter.put('/:id', async (req, res) => {
-   try{
-    const action =  await Actions.update(req.body)
-    const { project_id, description, notes } =req.body;
-    project_id && description && notes ? res.status(200).json(action) : res.status(400).json({ message: "something is not right"})
-   } catch(err){ res.status(500).json({message: "The actions can not be retrieved"})}
+actionRouter.put('/:id', async(req, res) => {
+    try{
+        const updatedAction = await Actions.update(req.params.id, req.body);
+        const { project_id, description, notes } =req.body;
+        if(project_id&&description&&notes){
+            return res.status(200).json(updatedAction)
+        }else{ return res.status(400).json({ message: "try again"})}
+    } catch(err){ res.status(500).json({errorMessage: err})}
 })
 
 

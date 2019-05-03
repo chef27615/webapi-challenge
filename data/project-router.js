@@ -2,13 +2,7 @@ const express = require('express');
 
 const Projects = require('./helpers/projectModel');
 
-const actions = require('./action-router');
-
-
-
 const projectRouter = express.Router();
-
-projectRouter.use('/actions', actions);
 
 projectRouter.get('/', async (req, res) => {
     try {
@@ -62,12 +56,6 @@ projectRouter.get('/:id/actions',  async (req, res) => {
    }catch(err){ res.status(500).json({ error: err});}
 })
 
-
-function getAction(req, res, next){
-    const actionBody = req.params.actions;
-    req.params.actions = actionBody;
-    next()
-}
 
 projectRouter.use((req, res, next) => {
     res.status(404).json({ message: "Nice try, but, no"})
