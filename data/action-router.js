@@ -8,11 +8,13 @@ actionRouter.get('/', async (req, res) => {
     if(actions){ return res.status(200).json(actions)}
 })
 
-actionRouter.post('/', async (req, res) => {
+actionRouter.post('/', checkLength, async (req, res) => {
+    
     try{
+        console.log(req.body)
         const newAction = await Actions.insert(req.body);
         const { project_id, description, notes } = req.body;
-        if(project_id&&description&&notes){
+        if(project_id && description.length  &&notes){
             return res.status(200).json(newAction)
         }else{ return res.status(400).json({ message: "try again"})}
     } catch(err){ res.status(500).json({errorMessage: err})}
@@ -25,7 +27,7 @@ actionRouter.delete('/:id', async(req, res) => {
         if(id){ 
             return res.status(200).json({ message: "action deleted"})
         }else{
-            return res.status(404).json({ message: " id not available"})
+            return res.status(404).json({ message: "id not available"})
         }
     } catch(err){ res.status(500).json({errorMessage: err})}
 })
@@ -40,7 +42,14 @@ actionRouter.put('/:id', async(req, res) => {
     } catch(err){ res.status(500).json({errorMessage: err})}
 })
 
-
+function checkLength(req, res, next){
+    const description = req.body.description
+    
+    if( description.length > 128 ){
+        return res.status(400).json({ message: "too long"})
+    }
+    next();
+}
 actionRouter.use((req, res, next) => {
     res.status(404).json({ message: "looking for some action? Not here"})
 })
